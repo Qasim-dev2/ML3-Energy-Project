@@ -1,0 +1,5 @@
+Top positive correlation with consumption: AC_Usage_Hours (r=0.91)
+Second strongest driver: Outdoor_Temperature_C (r=0.71)
+Highest average consumption season: Summer (18.89 kWh/day)
+Highest average consumption house type: Villa (14.38 kWh/day)
+Holiday/weekend avg consumption (14.39 kWh) vs working day (12.23 kWh)

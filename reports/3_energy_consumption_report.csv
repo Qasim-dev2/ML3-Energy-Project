@@ -1,0 +1,10 @@
+Season,House_Type,Avg_kWh,Min_kWh,Max_kWh,Sample_Count
+Spring/Autumn,Apartment,9.91561224489796,4.61,32.35,98
+Spring/Autumn,Independent House,9.927222222222222,5.28,32.35,72
+Spring/Autumn,Villa,11.1234375,6.53,17.87,32
+Summer,Apartment,18.566641791044773,7.06,32.35,134
+Summer,Independent House,18.638624999999998,10.55,29.99,80
+Summer,Villa,20.238958333333333,10.02,32.35,48
+Winter,Apartment,7.216969696969697,4.39,32.35,99
+Winter,Independent House,7.398888888888889,4.67,13.0,54
+Winter,Villa,9.024848484848485,6.61,14.03,33

@@ -1,0 +1,12 @@
+AC_Usage_Hours
+Family_Members
+Water_Motor_Usage_Hours
+Rooms_per_Person
+Total_Appliance_Hours
+Daily_Appliance_Usage_Count
+Washing_Machine_Usage_Hours
+Lighting_Hours
+Outdoor_Temperature_C
+Number_of_Rooms
+Fan_Usage_Hours
+Day_of_Week_Encoded

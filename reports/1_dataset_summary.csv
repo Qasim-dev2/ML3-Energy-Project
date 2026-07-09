@@ -1,0 +1,9 @@
+Metric,Value
+Total Records,650
+Total Features,27
+Missing Values (post-cleaning),0
+Duplicate Rows (post-cleaning),0
+Target Variable,Daily_Electricity_Consumption_kWh
+Avg Daily Consumption (kWh),12.93
+Min Daily Consumption (kWh),4.39
+Max Daily Consumption (kWh),32.35
