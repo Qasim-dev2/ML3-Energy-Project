@@ -1,0 +1,62 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check syntax (py compile)
+        run: |
+          python -m py_compile config.py
+          python -m py_compile src/preprocessing.py
+          python -m py_compile src/feature_engineering.py
+          python -m py_compile src/train_models.py
+          python -m py_compile src/recommendations.py
+          python -m py_compile src/eda.py
+          python -m py_compile src/generate_reports.py
+          python -m py_compile app/app.py
+          echo "All files compile cleanly."
+
+      - name: Verify data files exist
+        run: |
+          python -c "
+          import os
+          required = [
+            'data/energy_dataset.csv',
+            'data/energy_dataset_model_ready.csv',
+            'models/best_model.pkl',
+            'models/scaler.pkl',
+            'models/encoders.pkl',
+          ]
+          for f in required:
+            assert os.path.exists(f), f'Missing: {f}'
+          print('All required files present.')
+          "
