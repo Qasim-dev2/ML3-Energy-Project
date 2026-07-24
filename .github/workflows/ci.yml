@@ -60,3 +60,6 @@ jobs:
             assert os.path.exists(f), f'Missing: {f}'
           print('All required files present.')
           "
+
+      - name: Run unit tests
+        run: pytest tests/ -v --tb=short
