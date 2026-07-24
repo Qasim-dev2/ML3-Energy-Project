@@ -1,0 +1,14 @@
+# Normalize line endings
+* text=auto
+
+# Python files
+*.py text eol=lf
+
+# Notebooks
+*.ipynb text eol=lf
+
+# Data files — keep as-is
+*.csv binary
+*.pkl binary
+*.xlsx binary
+*.png binary
