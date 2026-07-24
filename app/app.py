@@ -9,13 +9,51 @@ Run with: python3 app.py
 
 import sys
 import os
+import csv
+import logging
+from datetime import datetime
+
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import pandas as pd
 import numpy as np
 import joblib
 import gradio as gr
 from recommendations import estimate_bill, efficiency_score, peak_usage_hours, generate_recommendations
+from config import APP_HOST, APP_PORT, MODEL_DIR as CFG_MODEL_DIR
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+log = logging.getLogger(__name__)
+
+# Prediction history log path
+LOG_DIR  = os.path.join(os.path.dirname(__file__), "..", "logs")
+LOG_FILE = os.path.join(LOG_DIR, "predictions.csv")
+os.makedirs(LOG_DIR, exist_ok=True)
+
+
+def _append_prediction_log(inputs_dict: dict, daily_kwh: float, bill: float, eff: float):
+    """Append one prediction row to the CSV history log."""
+    file_exists = os.path.isfile(LOG_FILE)
+    with open(LOG_FILE, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            "timestamp", "house_type", "family_members", "ac_hours",
+            "season", "outdoor_temp", "daily_kwh", "monthly_bill_pkr", "efficiency_score"
+        ])
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow({
+            "timestamp":        datetime.now().isoformat(timespec="seconds"),
+            "house_type":       inputs_dict.get("house_type", ""),
+            "family_members":   inputs_dict.get("family_members", ""),
+            "ac_hours":         inputs_dict.get("ac_hours", ""),
+            "season":           inputs_dict.get("season", ""),
+            "outdoor_temp":     inputs_dict.get("outdoor_temp", ""),
+            "daily_kwh":        round(daily_kwh, 3),
+            "monthly_bill_pkr": round(bill, 2),
+            "efficiency_score": eff,
+        })
+    log.info("Prediction logged → %s", LOG_FILE)
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
 
@@ -88,6 +126,12 @@ def predict(house_type, family_members, rooms, appliance_count,
         "washing_hours": washing_hours, "lighting_hours": lighting_hours,
     }
     recs = generate_recommendations(inputs, daily_kwh, monthly_kwh, bill, eff_score)
+
+    inputs_log = {
+        "house_type": house_type, "family_members": family_members,
+        "ac_hours": ac_hours, "season": season, "outdoor_temp": outdoor_temp,
+    }
+    _append_prediction_log(inputs_log, daily_kwh, bill, eff_score)
 
     result_md = f"""
 ### Prediction Results (Model: {BEST_MODEL_NAME})
