@@ -6,20 +6,21 @@ score calculation. Used by the Gradio app and CLI.
 """
 
 import os
+import sys
 import pandas as pd
 import numpy as np
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "energy_dataset_model_ready.csv")
-TARGET = "Daily_Electricity_Consumption_kWh"
+# Allow importing config from project root
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from config import MODEL_READY_PATH, TARGET, RATE_PER_KWH, DAYS_IN_MONTH
 
 # Reference distribution (used for efficiency percentile scoring)
-_df = pd.read_csv(DATA_PATH)
+_df = pd.read_csv(MODEL_READY_PATH)
 _consumption_dist = _df[TARGET].values
 
-RATE_PER_KWH = 35.0  # PKR per kWh (adjustable slab-free flat estimate)
 
-
-def estimate_bill(daily_kwh, days_in_month=30, rate=RATE_PER_KWH):
+def estimate_bill(daily_kwh, days_in_month=DAYS_IN_MONTH, rate=RATE_PER_KWH):
+    """Return (monthly_kwh, estimated_bill_PKR) for a given daily consumption."""
     monthly_kwh = daily_kwh * days_in_month
     bill = monthly_kwh * rate
     return monthly_kwh, bill
