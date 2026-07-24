@@ -9,15 +9,27 @@ Data cleaning & preprocessing pipeline:
 - Feature scaling / normalization
 """
 
+import logging
+import sys
+import os
+
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 import joblib
-import os
 
-RAW_PATH = "/home/claude/energy_project/data/energy_dataset.csv"
-OUT_DIR = "/home/claude/energy_project/data"
-MODEL_DIR = "/home/claude/energy_project/models"
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from config import RAW_DATA_PATH, CLEANED_DATA_PATH, MODEL_DIR, TARGET
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%H:%M:%S",
+)
+log = logging.getLogger(__name__)
+
+RAW_PATH  = RAW_DATA_PATH
+OUT_DIR   = os.path.dirname(CLEANED_DATA_PATH)
 
 
 def load_data():
@@ -36,7 +48,7 @@ def remove_duplicates(df):
     before = len(df)
     df = df.drop_duplicates().reset_index(drop=True)
     after = len(df)
-    print(f"Removed {before - after} duplicate rows")
+    log.info("Removed %d duplicate rows", before - after)
     return df
 
 
@@ -48,7 +60,8 @@ def handle_outliers(df, target_col="Daily_Electricity_Consumption_kWh"):
     lower = Q1 - 1.5 * IQR
     upper = Q3 + 1.5 * IQR
     n_outliers = ((df[target_col] < lower) | (df[target_col] > upper)).sum()
-    print(f"Detected {n_outliers} outliers in {target_col}; capping to [{lower:.2f}, {upper:.2f}]")
+    log.info("Detected %d outliers in %s; capping to [%.2f, %.2f]",
+             n_outliers, target_col, lower, upper)
     df[target_col] = df[target_col].clip(lower=lower, upper=upper)
     return df
 
@@ -75,7 +88,7 @@ def scale_features(df, feature_cols):
 
 def run_pipeline():
     df = load_data()
-    print("Initial shape:", df.shape)
+    log.info("Initial shape: %s", df.shape)
     df = handle_missing_values(df)
     df = remove_duplicates(df)
     df = handle_outliers(df)
@@ -90,7 +103,7 @@ def run_pipeline():
     df, scaler = scale_features(df, numeric_feature_cols)
 
     df.to_csv(os.path.join(OUT_DIR, "energy_dataset_cleaned.csv"), index=False)
-    print("Final cleaned shape:", df.shape)
+    log.info("Final cleaned shape: %s", df.shape)
     return df
 
 
