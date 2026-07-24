@@ -1,5 +1,10 @@
 # ⚡ Smart Electricity Consumption Prediction & Energy Optimization System
 
+[![CI](https://github.com/Qasim-dev2/ML3-Energy-Project/actions/workflows/ci.yml/badge.svg)](https://github.com/Qasim-dev2/ML3-Energy-Project/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Gradio](https://img.shields.io/badge/UI-Gradio-orange.svg)](https://gradio.app/)
+
 **Task ID:** ML-3 | Teyzix Core Internship (June Batch)
 **Domain:** Machine Learning (Advanced, Industry-Based)
 
